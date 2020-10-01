@@ -88,12 +88,10 @@ class PDFPage:
                 if k in klass.INHERITABLE_ATTRS and k not in tree:
                     tree[k] = v
             if tree.get('Type') is LITERAL_PAGES and 'Kids' in tree:
-                if klass.debug: logging.info('Pages: Kids=%r' % tree['Kids'])
                 for c in list_value(tree['Kids']):
                     for x in search(c, tree):
                         yield x
             elif tree.get('Type') is LITERAL_PAGE:
-                if klass.debug: logging.info('Page: %r' % tree)
                 yield (objid, tree)
         pages = False
         if 'Pages' in document.catalog:

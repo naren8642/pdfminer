@@ -87,8 +87,6 @@ class LZWDecoder:
                 # just ignore corrupt data and stop yielding there
                 break
             yield x
-            #logging.debug('nbits=%d, code=%d, output=%r, table=%r' %
-            #              (self.nbits, code, x, self.table[258:]))
         return
 
 

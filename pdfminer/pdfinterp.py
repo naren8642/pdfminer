@@ -169,8 +169,6 @@ class PDFResourceManager:
         if objid and objid in self._cached_fonts:
             font = self._cached_fonts[objid]
         else:
-            if self.debug:
-                logging.info('get_font: create: objid=%r, spec=%r' % (objid, spec))
             if STRICT:
                 if spec['Type'] is not LITERAL_FONT:
                     raise PDFFontError('Type is not /Font')
@@ -345,8 +343,6 @@ class PDFPageInterpreter:
             else:
                 return PREDEFINED_COLORSPACE.get(name)
         for (k, v) in dict_value(resources).items():
-            if self.debug:
-                logging.debug('Resource: %r: %r' % (k, v))
             if k == 'Font':
                 for (fontid, spec) in dict_value(v).items():
                     objid = None
@@ -804,7 +800,6 @@ class PDFPageInterpreter:
             if STRICT:
                 raise PDFInterpreterError('Undefined xobject id: %r' % xobjid)
             return
-        if self.debug: logging.info('Processing xobj: %r' % xobj)
         subtype = xobj.get('Subtype')
         if subtype is LITERAL_FORM and 'BBox' in xobj:
             interpreter = self.dup()
@@ -827,7 +822,6 @@ class PDFPageInterpreter:
         return
 
     def process_page(self, page):
-        if self.debug: logging.info('Processing page: %r' % page)
         (x0, y0, x1, y1) = page.mediabox
         if page.rotate == 90:
             ctm = (0, -1, 1, 0, -y0, x1)
@@ -846,9 +840,6 @@ class PDFPageInterpreter:
     #   Render the content streams.
     #   This method may be called recursively.
     def render_contents(self, resources, streams, ctm=MATRIX_IDENTITY):
-        if self.debug:
-            logging.info('render_contents: resources=%r, streams=%r, ctm=%r' %
-                     (resources, streams, ctm))
         self.init_resources(resources)
         self.init_state(ctm)
         self.execute(list_value(streams))
@@ -873,13 +864,9 @@ class PDFPageInterpreter:
                     nargs = func.__code__.co_argcount-1
                     if nargs:
                         args = self.pop(nargs)
-                        if self.debug:
-                            logging.debug('exec: %s %r' % (name, args))
                         if len(args) == nargs:
                             func(*args)
                     else:
-                        if self.debug:
-                            logging.debug('exec: %s' % name)
                         func()
                 else:
                     if STRICT:
